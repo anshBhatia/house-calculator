@@ -43,10 +43,15 @@ function HouseCalculator() {
         console.log('Sending GA event for calculation');
         
         ReactGA.event({
-            category: "Calculations",
-            action: "Calculate Costs",
-            label: "House Cost Range",
-            value: Math.floor(total / 1000000), // Value in millions
+            category: "House_Calculator",
+            action: "Calculate_Button_Click",
+            label: `Total:${total}_Paper:${paper}`,
+        });
+
+        ReactGA.event({
+            category: "House_Calculator",
+            action: "EMI_Calculation",
+            label: `Interest:${interestRate}_Tenure:${loanTenure}`,
         });
 
         // Track price difference percentage
@@ -87,10 +92,12 @@ function HouseCalculator() {
 
     // Track EMI parameter changes
     const handleEMIChange = (type, value) => {
+        console.log(`Sending GA event for ${type} change`);
+        
         ReactGA.event({
-            category: "EMI Settings",
-            action: `Changed ${type}`,
-            label: `New ${type}: ${value}`
+            category: "House_Calculator",
+            action: `EMI_${type}_Change`,
+            label: `New_Value:${value}`,
         });
         
         if (type === 'interest') {

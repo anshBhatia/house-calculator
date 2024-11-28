@@ -4,7 +4,7 @@ import HouseCalculator from './components/HouseCalculator';  // Make sure this p
 import ReactGA from 'react-ga4';
 
 // Initialize GA4 with your measurement ID
-ReactGA.initialize('G-XXXXXXXXXX'); // Replace with your GA4 measurement ID
+ReactGA.initialize('G-V83GGYK9W6'); // Replace with your GA4 measurement ID
 
 function App() {
   // Track page view

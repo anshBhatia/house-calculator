@@ -35,27 +35,25 @@ function HouseCalculator() {
         return Math.round(emi);
     };
 
-    // Previous handleInputChange function remains the same
-    const handleInputChange = (value, setter) => {
-        const numericValue = value.replace(/[^0-9]/g, '');
-        if (numericValue === '') {
-            setter('');
-            return;
-        }
-        setter(formatNumberWithCommas(numericValue));
-    };
-
+    // Track main calculation
     const calculateCosts = () => {
-        // Track calculation event
-        ReactGA.event({
-            category: "Calculator",
-            action: "Calculate",
-            label: "House Cost Calculation",
-            value: parseFloat(totalCost.replace(/,/g, '')) // Total cost as value
-        });
-
         const total = parseFloat(totalCost.replace(/,/g, ''));
         const paper = parseFloat(paperCost.replace(/,/g, ''));
+
+        ReactGA.event({
+            category: "Calculations",
+            action: "Calculate Costs",
+            label: "House Cost Range",
+            value: Math.floor(total / 1000000), // Value in millions
+        });
+
+        // Track price difference percentage
+        const priceDiff = ((total - paper) / paper) * 100;
+        ReactGA.event({
+            category: "Price Analysis",
+            action: "Price Difference",
+            label: `${priceDiff.toFixed(1)}% difference`
+        });
 
         if (!total || !paper) {
             alert('Please enter valid numbers');
@@ -85,10 +83,10 @@ function HouseCalculator() {
         setResults(calculations);
     };
 
-    // Track EMI recalculation
+    // Track EMI parameter changes
     const handleEMIChange = (type, value) => {
         ReactGA.event({
-            category: "EMI",
+            category: "EMI Settings",
             action: `Changed ${type}`,
             label: `New ${type}: ${value}`
         });
@@ -101,6 +99,25 @@ function HouseCalculator() {
         if (results) calculateCosts();
     };
 
+    // Track input changes
+    const handleInputChange = (value, setter, fieldName) => {
+        const numericValue = value.replace(/[^0-9]/g, '');
+        
+        if (numericValue && numericValue !== '') {
+            ReactGA.event({
+                category: "Input Values",
+                action: `Updated ${fieldName}`,
+                label: `Range: ${Math.floor(parseInt(numericValue) / 1000000)}M`
+            });
+        }
+        
+        if (numericValue === '') {
+            setter('');
+            return;
+        }
+        setter(formatNumberWithCommas(numericValue));
+    };
+
     return (
         <div className="calculator">
             {/* Previous input fields remain the same */}
@@ -110,7 +127,11 @@ function HouseCalculator() {
                     <input 
                         type="text"
                         value={totalCost}
-                        onChange={(e) => handleInputChange(e.target.value, setTotalCost)}
+                        onChange={(e) => handleInputChange(
+                            e.target.value, 
+                            setTotalCost,
+                            'Total Cost'
+                        )}
                         placeholder="Enter total cost"
                     />
                 </div>
@@ -120,7 +141,11 @@ function HouseCalculator() {
                     <input 
                         type="text"
                         value={paperCost}
-                        onChange={(e) => handleInputChange(e.target.value, setPaperCost)}
+                        onChange={(e) => handleInputChange(
+                            e.target.value, 
+                            setPaperCost,
+                            'Paper Value'
+                        )}
                         placeholder="Enter on-paper value"
                     />
                 </div>

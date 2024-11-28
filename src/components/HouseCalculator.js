@@ -40,6 +40,8 @@ function HouseCalculator() {
         const total = parseFloat(totalCost.replace(/,/g, ''));
         const paper = parseFloat(paperCost.replace(/,/g, ''));
 
+        console.log('Sending GA event for calculation');
+        
         ReactGA.event({
             category: "Calculations",
             action: "Calculate Costs",

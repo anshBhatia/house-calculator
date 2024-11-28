@@ -4,16 +4,30 @@ import HouseCalculator from './components/HouseCalculator';
 
 function App() {
   useEffect(() => {
-    // Initialize GA4 with your actual measurement ID
-    ReactGA.initialize('G-V83GGYK9W6');
-    
-    // Send pageview
-    ReactGA.send({
-      hitType: "pageview",
-      page: window.location.pathname,
-    });
+    try {
+      // Initialize GA4
+      ReactGA.initialize('G-V83GGYK9W6');
+      
+      // Send pageview
+      ReactGA.send({
+        hitType: "pageview",
+        page: window.location.pathname,
+      });
 
-    console.log('GA Initialized'); // Debug log
+      // Debug logs
+      console.log('GA Initialized');
+      console.log('Current path:', window.location.pathname);
+      
+      // Test event
+      ReactGA.event({
+        category: "Test",
+        action: "Page Load",
+        label: "Initial Load"
+      });
+      console.log('Test event sent');
+    } catch (error) {
+      console.error('GA Error:', error);
+    }
   }, []);
 
   return (

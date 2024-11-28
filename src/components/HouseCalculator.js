@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactGA from 'react-ga4';
 
 function HouseCalculator() {
     const [totalCost, setTotalCost] = useState('');
@@ -45,6 +46,14 @@ function HouseCalculator() {
     };
 
     const calculateCosts = () => {
+        // Track calculation event
+        ReactGA.event({
+            category: "Calculator",
+            action: "Calculate",
+            label: "House Cost Calculation",
+            value: parseFloat(totalCost.replace(/,/g, '')) // Total cost as value
+        });
+
         const total = parseFloat(totalCost.replace(/,/g, ''));
         const paper = parseFloat(paperCost.replace(/,/g, ''));
 
@@ -74,6 +83,22 @@ function HouseCalculator() {
         calculations.monthlyEMI = calculateEMI(calculations.maxLoan);
 
         setResults(calculations);
+    };
+
+    // Track EMI recalculation
+    const handleEMIChange = (type, value) => {
+        ReactGA.event({
+            category: "EMI",
+            action: `Changed ${type}`,
+            label: `New ${type}: ${value}`
+        });
+        
+        if (type === 'interest') {
+            setInterestRate(value);
+        } else {
+            setLoanTenure(value);
+        }
+        if (results) calculateCosts();
     };
 
     return (
@@ -122,10 +147,7 @@ function HouseCalculator() {
                                     type="number"
                                     step="0.1"
                                     value={interestRate}
-                                    onChange={(e) => {
-                                        setInterestRate(e.target.value);
-                                        if (results) calculateCosts();
-                                    }}
+                                    onChange={(e) => handleEMIChange('interest', e.target.value)}
                                 />
                             </div>
                             <div>
@@ -133,10 +155,7 @@ function HouseCalculator() {
                                 <input 
                                     type="number"
                                     value={loanTenure}
-                                    onChange={(e) => {
-                                        setLoanTenure(e.target.value);
-                                        if (results) calculateCosts();
-                                    }}
+                                    onChange={(e) => handleEMIChange('tenure', e.target.value)}
                                 />
                             </div>
                         </div>
